@@ -1,6 +1,8 @@
+using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 
 public class ChangeCursor : MonoBehaviour
 {
@@ -22,6 +24,7 @@ public class ChangeCursor : MonoBehaviour
     public Vector2 adjustHotSpot = Vector2.zero;
     //내부에서 사용할 필드를 선업합니다.????
     private Vector2 hotSpot;
+
     public void Start()
     {
         //코루틴을 사용합니다.
@@ -51,4 +54,5 @@ public class ChangeCursor : MonoBehaviour
         //이제 새로운 마우스 커서를 화면에 표시합니다.????????
         Cursor.SetCursor(cursorTexture, hotSpot, CursorMode.Auto);
     }
+
 }

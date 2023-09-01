@@ -13,8 +13,11 @@ public class UIManager : MonoBehaviour
 
     [Header("main Group 오브젝트 넣기")][SerializeField] private CanvasGroup mainGroup;
     [Header("new Group 오브젝트 넣기")][SerializeField] private CanvasGroup newGroup;
+    [Header("DrawCount Group 오브젝트 넣기")][SerializeField] private CanvasGroup DrawCountGroup;
 
     [Header("LineDrawer 오브젝트 넣기")][SerializeField] private LinesDrawer LD;
+
+    [Header("LineDrawer 오브젝트 넣기")][SerializeField] private Text drawCount;
 
     public static bool isDraw = false;
     public static bool isPaused = false;
@@ -29,6 +32,11 @@ public class UIManager : MonoBehaviour
     {
         DrawMode();
         GameOver();
+
+        if(isDraw)
+        {
+            drawCount.text = "" + LD.GetLineCount();
+        }
     }
 
     private bool isGameOver = false;
@@ -41,7 +49,10 @@ public class UIManager : MonoBehaviour
             LD.isPaused = true;
             Player.layer = 7;
             CanvasGroupOn(newGroup);
+            CanvasGroupOn(DrawCountGroup);
             CanvasGroupOff(mainGroup);
+
+            
         }
         else if(isDraw && !LD.Drawing &&!isPaused && (Input.GetKeyDown(KeyCode.Tab) || Input.GetKeyDown(KeyCode.G)))
         {
@@ -51,6 +62,7 @@ public class UIManager : MonoBehaviour
             Player.layer = 8;
             CanvasGroupOn(mainGroup);
             CanvasGroupOff(newGroup);
+            CanvasGroupOff(DrawCountGroup);
         }
     }
 

@@ -1,6 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using UnityEngine;
+using static UnityEngine.UI.CanvasScaler;
 
 public class LinesDrawer : MonoBehaviour
 {
@@ -21,11 +24,17 @@ public class LinesDrawer : MonoBehaviour
     protected float wheelInput;
     Line currentLine;
 
+    private List<Line> lines;
+    [SerializeField] private int dc = 5; 
+
     Camera cam;
 
     void Start()
     {
         cam = Camera.main;
+        lines = new List<Line>();
+
+        Line.OnAnyLineDestroy += currentLine_OnAnyLineDestroy;
         //canDrawOverLayerIndex = LayerMask.NameToLayer("Platform");
     }
 
@@ -41,7 +50,7 @@ public class LinesDrawer : MonoBehaviour
 
     private void DrawLine()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (dc > 0 && Input.GetMouseButtonDown(0))
         {
             BeginDraw();
         }
@@ -49,7 +58,7 @@ public class LinesDrawer : MonoBehaviour
         {
             Draw();
         }
-        if (Input.GetMouseButtonUp(0))
+        if (dc > 0 && Input.GetMouseButtonUp(0))
         {
             EndDraw();
         }
@@ -112,8 +121,31 @@ public class LinesDrawer : MonoBehaviour
                 currentLine.Mass(lineWidth);
                 currentLine.UsePhysics(true);
                 currentLine = null;
+                lines.Add(currentLine);
+                --dc;
             }
         }
+    }
+
+    private void currentLine_OnAnyLineDestroy(object sender, EventArgs e)
+    {
+        Line line = sender as Line;
+        
+        lines.Remove(line);
+        lines.Sort();
+        ++dc;
+    }
+
+    public int GetLineCount()
+    {
+        return dc;
+    }
+
+    private void OnDisable()
+    {
+        lines.Clear();
+        dc = 5;
+        Line.OnAnyLineDestroy -= currentLine_OnAnyLineDestroy;
     }
 
 }

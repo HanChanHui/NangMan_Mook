@@ -1,9 +1,12 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Line : MonoBehaviour
 {
+    public static event EventHandler OnAnyLineDestroy;
+
     public LineRenderer lineRenderer;
     public EdgeCollider2D edgeCollider;
     public Rigidbody2D rigidBody;
@@ -158,6 +161,7 @@ public class Line : MonoBehaviour
     IEnumerator Destroy()
     {
         yield return new WaitForSeconds(DestroyTime);
+        OnAnyLineDestroy?.Invoke(this, EventArgs.Empty);
         Destroy(this.gameObject);
         yield return null;
     }
