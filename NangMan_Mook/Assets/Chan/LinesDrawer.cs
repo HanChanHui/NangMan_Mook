@@ -1,18 +1,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using UnityEngine;
-using static UnityEngine.UI.CanvasScaler;
 
 public class LinesDrawer : MonoBehaviour
 {
-
     public GameObject linePrefab;
-    public LayerMask[] cantDrawOverLayer;
-    //int canDrawOverLayerIndex;
-
-    [Space(30f)]
+    public LayerMask cantDrawOverLayer;
     public Gradient lineColor;
     public float linePointsMinDistance;
     public float lineWidth;
@@ -25,7 +19,7 @@ public class LinesDrawer : MonoBehaviour
     Line currentLine;
 
     private List<Line> lines;
-    [SerializeField] private int dc = 5; 
+    [SerializeField] private int dc = 5;
 
     Camera cam;
 
@@ -35,9 +29,7 @@ public class LinesDrawer : MonoBehaviour
         lines = new List<Line>();
 
         Line.OnAnyLineDestroy += currentLine_OnAnyLineDestroy;
-        //canDrawOverLayerIndex = LayerMask.NameToLayer("Platform");
     }
-
 
     void Update()
     {
@@ -84,13 +76,14 @@ public class LinesDrawer : MonoBehaviour
         currentLine.UsePhysics(false);
         currentLine.SetLineColor(lineColor);
         currentLine.SetPointsMinDistance(linePointsMinDistance);
-        currentLine.SetLineWidth(lineWidth);
+        currentLine.SetRectangleWidth(lineWidth);
     }
 
     void Draw()
     {
         Vector2 mousePosition = cam.ScreenToWorldPoint(Input.mousePosition);
-        RaycastHit2D hit = Physics2D.CircleCast(mousePosition, lineWidth / 5f, Vector2.zero, 0.5f, cantDrawOverLayer[0]);
+        RaycastHit2D hit = Physics2D.CircleCast(mousePosition, lineWidth / 5f,
+                                                Vector2.zero, 0.5f, cantDrawOverLayer);
         Debug.DrawRay(mousePosition, Vector2.down, new Color(1, 0, 0));
 
         if (hit || currentLine.circleCount > 50)
@@ -101,7 +94,6 @@ public class LinesDrawer : MonoBehaviour
         {
             currentLine.AddPoint(mousePosition);
         }
-
     }
 
     void EndDraw()
@@ -116,7 +108,6 @@ public class LinesDrawer : MonoBehaviour
             }
             else
             {
-                //currentLine.gameObject.layer = canDrawOverLayerIndex;
                 currentLine.Gravity(lineWidth);
                 currentLine.Mass(lineWidth);
                 currentLine.UsePhysics(true);
@@ -130,7 +121,7 @@ public class LinesDrawer : MonoBehaviour
     private void currentLine_OnAnyLineDestroy(object sender, EventArgs e)
     {
         Line line = sender as Line;
-        
+
         lines.Remove(line);
         lines.Sort();
         ++dc;
@@ -147,5 +138,4 @@ public class LinesDrawer : MonoBehaviour
         dc = 5;
         Line.OnAnyLineDestroy -= currentLine_OnAnyLineDestroy;
     }
-
 }
