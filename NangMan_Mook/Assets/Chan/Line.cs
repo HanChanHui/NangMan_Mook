@@ -15,9 +15,8 @@ public class Line : MonoBehaviour
     [HideInInspector] public List<Vector2> points = new List<Vector2>();
     [HideInInspector] public int pointsCount = 0;
 
-    float pointsMinDistance = 0.1f;
-    float rectangleWidth = 0.1f; // Width of the rectangles representing the line
-    public float circleCount = 0f;
+    float pointsMinDistance = 50f;
+    float rectangleWidth = 0.15f; // Width of the rectangles representing the line
 
     [SerializeField] private float DestroyTime;
 
@@ -35,6 +34,7 @@ public class Line : MonoBehaviour
 
         points.Add(newPoint);
         pointsCount++;
+        //circleCount++;
 
         // Line Renderer
         lineRenderer.positionCount = pointsCount;
@@ -62,21 +62,25 @@ public class Line : MonoBehaviour
         // Convert List<Vector2> to Vector2[]
         Vector2[] linePoints = points.ToArray();
 
+        Vector2[] rectanglePoints = new Vector2[4];
         // Create a path for each rectangle between two consecutive points
         for (int i = 1; i < pointsCount; i++)
         {
             Vector2 point1 = linePoints[i - 1];
             Vector2 point2 = linePoints[i];
 
-            Vector2[] rectanglePoints = new Vector2[4];
-            rectanglePoints[0] = point1 - new Vector2(rectangleWidth / 2f, 0);
-            rectanglePoints[1] = point1 + new Vector2(rectangleWidth / 2f, 0);
-            rectanglePoints[2] = point2 + new Vector2(rectangleWidth / 2f, 0);
-            rectanglePoints[3] = point2 - new Vector2(rectangleWidth / 2f, 0);
+            Vector2 perpendicular = new Vector2(point2.y - point1.y, point1.x - point2.x).normalized;
+            Vector2 offset = perpendicular * (rectangleWidth / 2f);
+
+            rectanglePoints[0] = point1 - offset;
+            rectanglePoints[1] = point1 + offset;
+            rectanglePoints[2] = point2 + offset;
+            rectanglePoints[3] = point2 - offset;
 
             polygonCollider.pathCount++;
             polygonCollider.SetPath(polygonCollider.pathCount - 1, rectanglePoints);
         }
+
     }
 
     Vector2 GetLastPoint()
@@ -104,6 +108,15 @@ public class Line : MonoBehaviour
         rectangleWidth = width;
     }
 
+    public void SetLineWidth(float width)
+    {
+        lineRenderer.startWidth = width;
+        lineRenderer.endWidth = width;
+
+        //edgeCollider.edgeRadius = width / 2f;
+    }
+
+    /*
     public void Gravity(float width)
     {
         if (circleCount > 50)
@@ -155,6 +168,7 @@ public class Line : MonoBehaviour
             rigidBody.mass = 64f;
         }
     }
+    */
 
     // ªË¡¶
     IEnumerator Destroy()

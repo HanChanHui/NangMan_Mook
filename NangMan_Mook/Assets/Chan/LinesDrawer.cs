@@ -76,17 +76,17 @@ public class LinesDrawer : MonoBehaviour
         currentLine.UsePhysics(false);
         currentLine.SetLineColor(lineColor);
         currentLine.SetPointsMinDistance(linePointsMinDistance);
-        currentLine.SetRectangleWidth(lineWidth);
+        //currentLine.SetRectangleWidth(lineWidth);
+        currentLine.SetLineWidth(lineWidth);
     }
 
     void Draw()
     {
         Vector2 mousePosition = cam.ScreenToWorldPoint(Input.mousePosition);
-        RaycastHit2D hit = Physics2D.CircleCast(mousePosition, lineWidth / 5f,
-                                                Vector2.zero, 0.5f, cantDrawOverLayer);
+        RaycastHit2D hit = Physics2D.CircleCast(mousePosition, lineWidth / 5f, Vector2.zero, 0.5f, cantDrawOverLayer);
         Debug.DrawRay(mousePosition, Vector2.down, new Color(1, 0, 0));
 
-        if (hit || currentLine.circleCount > 50)
+        if (hit || currentLine.pointsCount > 50)
         {
             EndDraw();
         }
@@ -108,8 +108,8 @@ public class LinesDrawer : MonoBehaviour
             }
             else
             {
-                currentLine.Gravity(lineWidth);
-                currentLine.Mass(lineWidth);
+                //currentLine.Gravity(lineWidth);
+                //currentLine.Mass(lineWidth);
                 currentLine.UsePhysics(true);
                 currentLine = null;
                 lines.Add(currentLine);
